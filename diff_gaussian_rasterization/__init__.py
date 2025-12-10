@@ -29,7 +29,7 @@ def rasterize_gaussians(
     cov3Ds_precomp,
     raster_settings,
 ):  
-    print("rasterize_gaussians")
+    # print("rasterize_gaussians")
     return _RasterizeGaussians.apply(
         means3D,
         means2D,
@@ -56,7 +56,7 @@ class _RasterizeGaussians(torch.autograd.Function):
         cov3Ds_precomp,
         raster_settings,
     ):
-        print("_RasterizeGaussians --> forward") # [YC] debug
+        # print("_RasterizeGaussians --> forward") # [YC] debug
         
         # Flatten from CxHxW
         bg = raster_settings.bg if len(raster_settings.bg.shape) == 1 else raster_settings.bg.permute(1,2,0).flatten()
@@ -98,16 +98,16 @@ class _RasterizeGaussians(torch.autograd.Function):
                 print("\nAn error occured in forward. Please forward snapshot_fw.dump for debugging.")
                 raise ex
         else:
-            print("rasterize_gaussians") # [YC] debug
+            # print("rasterize_gaussians") # [YC] debug
             num_rendered, color, radii, geomBuffer, binningBuffer, imgBuffer = _C.rasterize_gaussians(*args)
 
         # Keep relevant tensors for backward
         ctx.raster_settings = raster_settings
-        print("raster_settings") # [YC] debug
+        # print("raster_settings") # [YC] debug
         ctx.num_rendered = num_rendered
-        print("num_rendered") # [YC] debug
+        # print("num_rendered") # [YC] debug
         ctx.save_for_backward(colors_precomp, means3D, scales, rotations, cov3Ds_precomp, radii, sh, geomBuffer, binningBuffer, imgBuffer)
-        print("save_for_backward") # [YC] debug
+        # print("save_for_backward") # [YC] debug
         return color, radii
 
     @staticmethod
@@ -206,9 +206,9 @@ class GaussianRasterizer(nn.Module):
         return visible
 
     def forward(self, means3D, means2D, opacities, shs = None, colors_precomp = None, scales = None, rotations = None, cov3D_precomp = None):
-        
-        print("GaussianRasterizer --> forward")
-        
+
+        # print("GaussianRasterizer --> forward") # [YC] debug
+
         raster_settings = self.raster_settings
 
         if (shs is None and colors_precomp is None) or (shs is not None and colors_precomp is not None):
